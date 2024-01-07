@@ -1,5 +1,5 @@
-const {formatBaseURL, crawlPage} = require('./crawl.js')
-const {printReport} = require('./report.js')
+const {formatBaseURL, crawlPage} = require('./src/crawl.js')
+const {printReport} = require('./src/report.js')
 
 async function main() {
     const numArgs = process.argv.length;

@@ -1,5 +1,5 @@
 const {describe, test, expect} = require('@jest/globals');
-const {formatBaseURL, normalizeURL, getURLsFromHTML} = require('./crawl.js');
+const {formatBaseURL, normalizeURL, getURLsFromHTML} = require('../src/crawl.js');
 
 describe('crawl module', () => {
     test('formatBaseURL: site-page', () => {

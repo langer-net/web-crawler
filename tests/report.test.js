@@ -1,5 +1,5 @@
 const {describe, test, expect} = require('@jest/globals');
-const { sortPages } = require('./report.js')
+const { sortPages } = require('../src/report.js')
 
 describe('report module', () => {
     test('sortPages: example', () => {
