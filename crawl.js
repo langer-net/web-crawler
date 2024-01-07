@@ -15,7 +15,7 @@ function getURLsFromHTML(htmlBody, baseURL) {
     const links = [...dom.window.document.querySelectorAll('a')];
     const rawUrls = links.map(link => link.href);
     const urls = [];
-    for (rawUrl of rawUrls) {
+    for (const rawUrl of rawUrls) {
         if (rawUrl.startsWith('/')) {
             urls.push(`${baseURL}${rawUrl}`);
         } else if (rawUrl.startsWith('http')) {
@@ -25,8 +25,28 @@ function getURLsFromHTML(htmlBody, baseURL) {
     return urls;
 }
 
-function crawlPage(baseURL) {
-    console.log(baseURL);
+async function crawlPage(currentUrl) {
+    console.log(`Crawling ${currentUrl}`)
+
+    try {
+        const response = await fetch(currentUrl);
+        if (!response.status > 399) {
+            console.error(`Got HTTP error, status code: ${response.status}`);
+            return;
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType.includes('text/html')){
+            console.error(`Got non-HTML response: ${contentType}`);
+            return;
+        }
+
+        const data = await response.text();
+        console.log(data);
+
+    } catch (err) {
+        console.error(err.message);
+    }
 }
 
 module.exports = {
