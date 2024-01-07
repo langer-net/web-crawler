@@ -1,7 +1,28 @@
 const {describe, test, expect} = require('@jest/globals');
-const {normalizeURL, getURLsFromHTML} = require('./crawl.js');
+const {formatBaseURL, normalizeURL, getURLsFromHTML} = require('./crawl.js');
 
 describe('crawl module', () => {
+    test('formatBaseURL: site-page', () => {
+        const input = 'https://blog.boot.dev/news/bootdev-beat-2024-01/';
+        const actual = formatBaseURL(input);
+        const expected = 'https://blog.boot.dev';
+        expect(actual).toBe(expected);
+    })
+
+    test('formatBaseURL: slash', () => {
+        const input = 'https://blog.boot.dev/';
+        const actual = formatBaseURL(input);
+        const expected = 'https://blog.boot.dev';
+        expect(actual).toBe(expected);
+    })
+
+    test('formatBaseURL: protocol', () => {
+        const input = 'http://blog.boot.dev/';
+        const actual = formatBaseURL(input);
+        const expected = 'http://blog.boot.dev';
+        expect(actual).toBe(expected);
+    })
+
     // normalizeURL
     test('normalizeURL: protocol', () => {
         const input = 'https://blog.boot.dev/path';

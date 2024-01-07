@@ -1,12 +1,76 @@
 const {JSDOM} = require('jsdom')
 
+function formatBaseURL(baseURL) {
+    const urlObj = new URL(baseURL);
+    let formattedURL = `${urlObj.protocol}//${urlObj.hostname}`;
+    if (formattedURL.length > 0 && formattedURL.slice(-1) === '/') {
+        formattedURL = formattedURL.slice(0, -1);
+    }
+    return formattedURL;
+}
+
+async function crawlPage(baseURL, currentURL, pages) {
+    const baseURLObj = new URL(baseURL);
+    const currentURLObj = new URL(currentURL);
+    if (currentURLObj.hostname !== baseURLObj.hostname) {
+        return pages;
+    }
+
+    const normalizedURL = normalizeURL(currentURL);
+    if (pages[normalizedURL] > 0) {
+        pages[normalizedURL]++;
+        return pages
+    }
+    if (currentURL !== baseURL) {
+        pages[normalizedURL] = 1;
+    } else {
+        pages[normalizedURL] = 0;
+    }
+
+    const htmlBody = await crawlCurrentPage(currentURL);
+
+    let nextURLs = []
+    if (htmlBody) {
+        nextURLs = getURLsFromHTML(htmlBody, baseURL);
+    }
+
+    for (const nextURL of nextURLs) {
+        pages = await crawlPage(baseURL, nextURL, pages);
+    }
+
+    return pages;
+}
+
 function normalizeURL(url) {
-    const urlObject = new URL(url);
-    let fullPath = `${urlObject.hostname}${urlObject.pathname}`;
+    const urlObj = new URL(url);
+    let fullPath = `${urlObj.hostname}${urlObj.pathname}`;
     if (fullPath.length > 0 && fullPath.slice(-1) === '/') {
         fullPath = fullPath.slice(0, -1);
     }
     return fullPath;
+}
+
+async function crawlCurrentPage(currentURL) {
+    console.log(`Currently crawling ${currentURL}`)
+
+    try {
+        const response = await fetch(currentURL);
+        if (!response.status > 399) {
+            console.log(`Got HTTP error, status code: ${response.status}`);
+            return;
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType.includes('text/html')) {
+            console.log(`Got non-HTML response: ${contentType}`);
+            return;
+        }
+
+        return await response.text();
+
+    } catch (err) {
+        console.log(err.message);
+    }
 }
 
 // Maybe needs fixing?
@@ -25,30 +89,6 @@ function getURLsFromHTML(htmlBody, baseURL) {
     return urls;
 }
 
-async function crawlPage(currentUrl) {
-    console.log(`Crawling ${currentUrl}`)
-
-    try {
-        const response = await fetch(currentUrl);
-        if (!response.status > 399) {
-            console.error(`Got HTTP error, status code: ${response.status}`);
-            return;
-        }
-
-        const contentType = response.headers.get('content-type');
-        if (!contentType.includes('text/html')){
-            console.error(`Got non-HTML response: ${contentType}`);
-            return;
-        }
-
-        const data = await response.text();
-        console.log(data);
-
-    } catch (err) {
-        console.error(err.message);
-    }
-}
-
 module.exports = {
-    normalizeURL, getURLsFromHTML, crawlPage
+    formatBaseURL, crawlPage, normalizeURL, getURLsFromHTML,
 }
