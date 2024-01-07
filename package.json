@@ -1,7 +1,7 @@
 {
   "name": "web-crawler",
   "version": "1.0.0",
-  "description": "",
+  "description": "Web crawler to analyze SEO links",
   "main": "index.js",
   "scripts": {
     "start": "node main.js",
@@ -11,10 +11,6 @@
     "type": "git",
     "url": "git+https://github.com/langer-net/web-crawler.git"
   },
-  "keywords": [
-    "webcrawler",
-    "javascript"
-  ],
   "author": "Max Langer",
   "license": "MIT",
   "bugs": {
@@ -23,5 +19,8 @@
   "homepage": "https://github.com/langer-net/web-crawler#readme",
   "devDependencies": {
     "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "jsdom": "^23.1.0"
   }
 }
