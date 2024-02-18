@@ -90,5 +90,5 @@ function getURLsFromHTML(htmlBody, baseURL) {
 }
 
 module.exports = {
-    formatBaseURL, crawlPage, normalizeURL, getURLsFromHTML,
+    formatBaseURL, crawlPage, getURLsFromHTML, normalizeURL
 }
